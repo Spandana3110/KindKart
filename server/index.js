@@ -266,6 +266,11 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// 404 handler (for API only, not frontend)
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ message: 'API route not found' });
+});
+
 // Serve React app in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
@@ -283,11 +288,6 @@ app.use((err, req, res, next) => {
     message: 'Something went wrong!',
     error: process.env.NODE_ENV === 'development' ? err.message : {}
   });
-});
-
-// 404 handler (for API only, not frontend)
-app.use('/api/*', (req, res) => {
-  res.status(404).json({ message: 'API route not found' });
 });
 
 // Start server
