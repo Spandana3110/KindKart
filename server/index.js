@@ -276,17 +276,23 @@ app.use('/api/*', (req, res) => {
 if (process.env.NODE_ENV === 'production') {
   const buildPath = path.join(__dirname, '../client/build');
   
+  console.log('🔍 Checking for build folder at:', buildPath);
+  console.log('🔍 Build folder exists:', fs.existsSync(buildPath));
+  
   // Check if build folder exists
   if (fs.existsSync(buildPath)) {
+    console.log('✅ Build folder found, serving React app');
     app.use(express.static(buildPath));
 
     // For any route not handled by above, serve index.html (for React Router)
     app.get('*', (req, res) => {
+      console.log('📄 Serving index.html for route:', req.path);
       res.sendFile(path.join(buildPath, 'index.html'));
     });
   } else {
     console.log('⚠️  Build folder not found. Make sure to run "npm run build" before deployment.');
     app.get('*', (req, res) => {
+      console.log('❌ Build folder missing for route:', req.path);
       res.status(500).json({ 
         message: 'Frontend build not found. Please ensure the build process completed successfully.',
         error: 'Build folder missing'
