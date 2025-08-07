@@ -11,6 +11,7 @@
     "install-all": "npm install && cd client && npm install",
     "start": "node server/index.js"
   },
+  
   "keywords": ["donation", "charity", "recycling", "community", "mern"],
   "author": "KindKart Team",
   "license": "MIT",
@@ -33,4 +34,5 @@
     "nodemon": "^3.0.1",
     "concurrently": "^8.2.0"
   }
+  
 } 
