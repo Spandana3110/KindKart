@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
 const path = require('path');
+const fs = require('fs');
 
 // Load environment variables
 dotenv.config();
@@ -273,12 +274,25 @@ app.use('/api/*', (req, res) => {
 
 // Serve React app in production
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build')));
+  const buildPath = path.join(__dirname, '../client/build');
+  
+  // Check if build folder exists
+  if (fs.existsSync(buildPath)) {
+    app.use(express.static(buildPath));
 
-  // For any route not handled by above, serve index.html (for React Router)
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
-  });
+    // For any route not handled by above, serve index.html (for React Router)
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(buildPath, 'index.html'));
+    });
+  } else {
+    console.log('⚠️  Build folder not found. Make sure to run "npm run build" before deployment.');
+    app.get('*', (req, res) => {
+      res.status(500).json({ 
+        message: 'Frontend build not found. Please ensure the build process completed successfully.',
+        error: 'Build folder missing'
+      });
+    });
+  }
 }
 
 // Error handling middleware
